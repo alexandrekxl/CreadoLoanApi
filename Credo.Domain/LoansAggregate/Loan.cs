@@ -4,7 +4,7 @@ using Credo.Domain.Users.ValueObjects;
 
 namespace Credo.Domain.Loans
 {
-    public sealed class Loan : Entity<LoanId>
+    public sealed class Loan : AggregateRoot<LoanId, Guid>
     {
         public int LoanType { get; private set;}
         public decimal Amount { get; private set;}

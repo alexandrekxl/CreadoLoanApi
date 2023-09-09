@@ -11,8 +11,16 @@ namespace Credo.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            ConfigureUserTable(builder);
+            ConfigureUserLoanIdsTable(builder);
+        }
+
+        
+
+        private static void ConfigureUserTable(EntityTypeBuilder<User> builder)
+        {
             builder
-                .ToTable(nameof(User));
+                 .ToTable(nameof(User));
 
             builder
                 .HasKey(u => u.Id);
@@ -46,20 +54,26 @@ namespace Credo.Infrastructure.Persistence.Configurations
                 .Property(u => u.PersonalNumber)
                 .HasMaxLength(50);
 
-            builder.OwnsMany(u => u.LoanIds, lb =>
-            {
-                lb.ToTable("Loan");
-
-                lb.WithOwner().HasForeignKey("UserID");
-
-                lb.HasKey("Id");
-
-                lb.Property(l => l.Value).ValueGeneratedNever();
-            });
-
             builder.Metadata
             .FindNavigation(nameof(User.LoanIds))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);
+        }
+
+        private void ConfigureUserLoanIdsTable(EntityTypeBuilder<User> builder)
+        {
+            builder.OwnsMany(u => u.LoanIds, Ul =>
+            {
+                Ul.WithOwner()
+                  .HasForeignKey("LoanIds");
+
+                Ul.ToTable("UserLoanIds");
+
+                Ul.HasKey("Id");
+
+                Ul.Property(mi => mi.Value)
+                  .ValueGeneratedNever()
+                  .HasColumnName("LoanID");
+            });
         }
     }
 }

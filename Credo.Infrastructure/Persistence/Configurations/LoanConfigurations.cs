@@ -43,12 +43,6 @@ namespace Credo.Infrastructure.Persistence.Configurations
                .HasConversion(
                    Id => Id.Value,
                    value => UserId.Create(value));
-
-            builder
-                .HasOne<User>()
-                .WithMany()
-                .HasForeignKey(l => l.UserId)
-                .IsRequired();
         }
     }
 }
