@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Credo.Domain.Common.Models;
+using Credo.Domain.Users;
 
 namespace Credo.Domain.UsersAggregate.Events
 {
-    internal class UserCreated
-    {
-    }
+    public record UserCreated(User User) : IDomainEvent;
 }

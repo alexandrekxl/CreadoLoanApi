@@ -17,9 +17,9 @@ namespace Credo.Infrastructure.Persistence
         }
 
         public CredoDbContext(
-            DbContextOptions<CredoDbContext> options,
+            DbContextOptions<CredoDbContext> options, 
             PublishDomainEventsInterceptor publishDomainEventsInterceptor) 
-                : base(options)
+            : base(options)
         {
             _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
         }

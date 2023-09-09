@@ -9,9 +9,7 @@ namespace Credo.Infrastructure.Persistence.Interceptors
     {
         private readonly IPublisher _mediator;
 
-        public PublishDomainEventsInterceptor(
-            IPublisher mediator
-        )
+        public PublishDomainEventsInterceptor(IPublisher mediator)
         {
             _mediator = mediator;
         }

@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Credo.Domain.UsersAggregate.Events;
+using MediatR;
 
 namespace Credo.Application.Authentication
 {
-    internal class DummyHandler
+    public class DummyHandler : INotificationHandler<UserCreated>
     {
+        public Task Handle(UserCreated notification, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

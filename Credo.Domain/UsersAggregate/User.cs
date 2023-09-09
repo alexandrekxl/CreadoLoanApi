@@ -1,6 +1,7 @@
 ﻿using Credo.Domain.Common.Models;
 using Credo.Domain.Loans.ValueObjects;
 using Credo.Domain.Users.ValueObjects;
+using Credo.Domain.UsersAggregate.Events;
 
 namespace Credo.Domain.Users
 {
@@ -42,14 +43,17 @@ namespace Credo.Domain.Users
             string personalNumber,
             DateTime birthDate)
         {
-            return new(
-                UserId.CreateUnique(),
-                firstName,
-                lastName,
-                email,
-                password,
-                personalNumber,
-                birthDate);
+             var user = new User(UserId.CreateUnique(),
+                                 firstName,
+                                 lastName,
+                                 email,
+                                 password,
+                                 personalNumber,
+                                 birthDate);
+
+            user.AddDomainEvent(new UserCreated(user));
+
+            return user;
         }
 
 #pragma warning disable CS8618
