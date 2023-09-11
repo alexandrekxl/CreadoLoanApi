@@ -1,11 +1,14 @@
-﻿using Credo.Application.Common.Interfaces.Authentication;
+﻿using Credo.Application.Common.Interfaces;
+using Credo.Application.Common.Interfaces.Authentication;
 using Credo.Application.Common.Interfaces.Persistence;
 using Credo.Application.Common.Interfaces.Services;
 using Credo.Infrastructure.Authentication;
 using Credo.Infrastructure.Persistence;
 using Credo.Infrastructure.Persistence.Interceptors;
 using Credo.Infrastructure.Persistence.Repositories;
+using Credo.Infrastructure.Persistence.UnitOfWork;
 using Credo.Infrastructure.Services;
+using Credo.Infrastructure.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -21,34 +24,47 @@ namespace Credo.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(
             this IServiceCollection services,
-            IConfiguration configration)
+            IConfiguration configuration)
         {
             services
-                .AddAuth(configration)
-                .AddPersistence();
+                .AddAuth(configuration)
+                .AddPersistence(configuration);
 
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
             return services;
         }
 
-        public static IServiceCollection AddPersistence(this IServiceCollection services)
+        public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<CredoDbContext>(options => options.UseSqlServer("Server=localhost;Database=credo;Trusted_Connection=True"));
+            var connectionString = new ConnectionString();
+            configuration.Bind(ConnectionString.SectionName, connectionString);
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddDbContext<CredoDbContext>(options =>
+            {
+                options.UseSqlServer(connectionString: connectionString.CredoConnection);
+                options.AddInterceptors();
+            });
 
 
             services.AddScoped<PublishDomainEventsInterceptor>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ILoanRepository, LoanRepository>();
+            services.AddScoped<ILoanStatusRepository, LoanStatusesRepository>();
+            services.AddScoped<ILoanTypesRepository, LoanTypesRepository>();
 
             return services;
         }
 
         public static IServiceCollection AddAuth(
             this IServiceCollection services,
-            IConfiguration configration)
+            IConfiguration configuration)
         {
             var jwtSettings = new JwtSettings();
-            configration.Bind(JwtSettings.SectionName, jwtSettings);
+            configuration.Bind(JwtSettings.SectionName, jwtSettings);
+
+            
 
             services.AddSingleton(Options.Create(jwtSettings));
             services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();

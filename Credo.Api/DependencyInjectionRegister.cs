@@ -9,7 +9,7 @@ namespace Credo.Api
         public static IServiceCollection AddPresentation(this IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSingleton<ProblemDetailsFactory, CredoProblemDetailsFactory>();
+            //services.AddSingleton<ProblemDetailsFactory, CredoProblemDetailsFactory>();
             services.AddMappings();
             return services;
         }

@@ -11,7 +11,7 @@ namespace Credo.Application.Authentication.Queries
     {
         public LoginQueryValidator()
         {
-            RuleFor(x => x.Email).NotEmpty();
+            RuleFor(x => x.PersonalNumber).NotEmpty();
             RuleFor(x => x.Password).NotEmpty();
         }
     }

@@ -1,31 +1,34 @@
 ﻿using Credo.Domain.Common.Models;
 using Credo.Domain.Loans;
+using Credo.Domain.LoansAggregate.Entities;
 using Credo.Domain.Users;
+using Credo.Infrastructure.Authentication;
 using Credo.Infrastructure.Persistence.Interceptors;
+using Credo.Infrastructure.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Credo.Infrastructure.Persistence
 {
     public class CredoDbContext : DbContext
     {
-        private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor;
+        //private readonly PublishDomainEventsInterceptor _publishDomainEventsInterceptor;
 
-        public CredoDbContext()
-        {
-            
-        }
+        //public CredoDbContext() {}
 
         public CredoDbContext(
-            DbContextOptions<CredoDbContext> options, 
-            PublishDomainEventsInterceptor publishDomainEventsInterceptor) 
+            DbContextOptions<CredoDbContext> options
+            /*PublishDomainEventsInterceptor publishDomainEventsInterceptor*/) 
             : base(options)
         {
-            _publishDomainEventsInterceptor = publishDomainEventsInterceptor;
+            //_publishDomainEventsInterceptor = publishDomainEventsInterceptor;
         }
 
         public virtual DbSet<User> Users { get; set; } = null!;
         public DbSet<Loan> Loans { get; set; } = null!;
+        public DbSet<LoanStatuses> LoansStatuses { get; set; } = null!;
+        public DbSet<LoanTypes> LoanTypes { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,18 +36,15 @@ namespace Credo.Infrastructure.Persistence
                 .Ignore<List<IDomainEvent>>()
                 .ApplyConfigurationsFromAssembly(typeof(CredoDbContext).Assembly);
 
-
-
             base.OnModelCreating(modelBuilder);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder
-                .UseSqlServer("Server=DESKTOP-UFORNDE;Database=credo;Trusted_Connection=True;Encrypt=false;Integrated Security=true;")
-                .AddInterceptors(_publishDomainEventsInterceptor);
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder
+        //        .AddInterceptors(_publishDomainEventsInterceptor);
 
-            base.OnConfiguring(optionsBuilder);
-        }
+        //    //base.OnConfiguring(optionsBuilder);
+        //}
     }
 }

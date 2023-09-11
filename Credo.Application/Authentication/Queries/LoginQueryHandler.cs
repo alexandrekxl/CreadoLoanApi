@@ -5,6 +5,7 @@ using Credo.Domain.Users;
 using Credo.Domain.Common.Errors;
 using ErrorOr;
 using MediatR;
+using Credo.Application.Common.Interfaces;
 
 namespace Credo.Application.Authentication.Queries
 {
@@ -12,19 +13,20 @@ namespace Credo.Application.Authentication.Queries
     IRequestHandler<LoginQuery, ErrorOr<AuthenticationResult>>
     {
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public LoginQueryHandler(IJwtTokenGenerator jwtTokenGenerator, IUserRepository userRepository)
+        public LoginQueryHandler(IJwtTokenGenerator jwtTokenGenerator, IUnitOfWork unitOfWork)
         {
             _jwtTokenGenerator = jwtTokenGenerator;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ErrorOr<AuthenticationResult>> Handle(LoginQuery request, CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
+            var userFromDb = await _unitOfWork.UserRepository.GetUserByPersonalNumber(request.PersonalNumber);
 
-            if (_userRepository.GetUserByEmail(request.Email) is not User user)
+            if (userFromDb is not User user)
             {
                 return Errors.Authentication.InvalidCredentials;
             }

@@ -4,7 +4,9 @@ namespace Credo.Application.Common.Interfaces.Persistence
 {
     public interface IUserRepository
     {
-        User? GetUserByEmail(string email);
-        void AddUser(User user);
+        Task<User?> GetUserById(Guid Id);
+        Task<User?> GetUserByPersonalNumber(string PersonalNumber);
+        Task AddUser(User user);
+
     }
 }

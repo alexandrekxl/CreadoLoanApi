@@ -1,5 +1,6 @@
 ﻿using Credo.Application.Common.Interfaces.Persistence;
 using Credo.Domain.Users;
+using Microsoft.EntityFrameworkCore;
 
 namespace Credo.Infrastructure.Persistence.Repositories
 {
@@ -12,17 +13,20 @@ namespace Credo.Infrastructure.Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public void AddUser(User user)
+        public async Task AddUser(User user)
         {
-            _dbContext.Add(user);
-
-            //_dbContext.SaveChanges();
+            await _dbContext.Users.AddAsync(user);
         }
 
-        public User? GetUserByEmail(string email)
+        public async Task<User?> GetUserById(Guid Id)
         {
-            //return _dataDbContext.SingleOrDefault(u => u.Email == email);
-            return null;
+            return await _dbContext.Users.SingleOrDefaultAsync(u => u.Id.Equals(Id));
         }
+
+        public async Task<User?> GetUserByPersonalNumber(string personalNUmber)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(u => u.PersonalNumber == personalNUmber);
+        }
+            
     }
 }

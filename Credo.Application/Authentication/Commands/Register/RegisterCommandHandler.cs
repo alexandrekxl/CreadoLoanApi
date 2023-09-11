@@ -1,4 +1,5 @@
 ﻿using Credo.Application.Authentication.Common;
+using Credo.Application.Common.Interfaces;
 using Credo.Application.Common.Interfaces.Authentication;
 using Credo.Application.Common.Interfaces.Persistence;
 using Credo.Domain.Common.Errors;
@@ -12,32 +13,32 @@ namespace Credo.Application.Authentication.Commands.Register
     IRequestHandler<RegisterCommand, ErrorOr<AuthenticationResult>>
     {
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RegisterCommandHandler(IJwtTokenGenerator jwtTokenGenerator, IUserRepository userRepository)
+        public RegisterCommandHandler(IJwtTokenGenerator jwtTokenGenerator, IUnitOfWork unitOfWork)
         {
             _jwtTokenGenerator = jwtTokenGenerator;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ErrorOr<AuthenticationResult>> Handle(RegisterCommand command, CancellationToken cancellationToken)
         {
-            await Task.CompletedTask;
-
-            if (_userRepository.GetUserByEmail(command.Email) is not null)
+            if (_unitOfWork.UserRepository.GetUserByPersonalNumber(command.PersonalNumber).Result is not null)
             {
-                return Errors.User.DuplicateEmail;
+                return Errors.User.DuplicateUser;
             }
 
             var user = User.Create(
-                command.FirstName,
+                command.FirstName,  
                 command.LastName,
                 command.Email,
                 command.Password,
                 command.PersonalNumber,
                 command.BirthDate);
 
-            _userRepository.AddUser(user);
+            await _unitOfWork.UserRepository.AddUser(user);
+
+            await _unitOfWork.SaveChangesAsync();
 
             var token = _jwtTokenGenerator.GenerateToken(user);
 

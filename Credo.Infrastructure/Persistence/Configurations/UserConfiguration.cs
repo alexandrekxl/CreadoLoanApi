@@ -64,15 +64,15 @@ namespace Credo.Infrastructure.Persistence.Configurations
             builder.OwnsMany(u => u.LoanIds, Ul =>
             {
                 Ul.WithOwner()
-                  .HasForeignKey("LoanIds");
+                  .HasForeignKey("UserId");
 
                 Ul.ToTable("UserLoanIds");
 
                 Ul.HasKey("Id");
 
-                Ul.Property(mi => mi.Value)
+                Ul.Property(l => l.Value)
                   .ValueGeneratedNever()
-                  .HasColumnName("LoanID");
+                  .HasColumnName("UserLoanId");
             });
         }
     }

@@ -1,5 +1,4 @@
 ﻿using Credo.Api.Http;
-using Credo.Infrastructure.Persistence;
 using ErrorOr;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

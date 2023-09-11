@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Credo.Api.Controllers
 {
     public class ErrorsController : Controller
     {
-        public IActionResult Index()
+        [Route("/error")]
+        public IActionResult Error()
         {
-            return View();
+            var exception = HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
+
+            return Problem();
         }
     }
 }

@@ -1,9 +1,4 @@
 ﻿using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Credo.Domain.Common.Errors
 {
@@ -11,9 +6,9 @@ namespace Credo.Domain.Common.Errors
     {
         public static class User
         {
-            public static Error DuplicateEmail => Error.Conflict(
-                code: "User.DuplicateEmail",
-                description: "Email is already in use.");
+            public static Error DuplicateUser => Error.Conflict(
+                code: "User.DuplicateUser",
+                description: "User Already Registered.");
         }
     }
 }

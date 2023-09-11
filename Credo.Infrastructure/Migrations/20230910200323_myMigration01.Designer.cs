@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Credo.Infrastructure.Migrations
 {
     [DbContext(typeof(CredoDbContext))]
-    [Migration("20230908213333_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230910200323_myMigration01")]
+    partial class myMigration01
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,6 +48,79 @@ namespace Credo.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Loan", (string)null);
+                });
+
+            modelBuilder.Entity("Credo.Domain.LoansAggregate.Entities.LoanStatuses", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("StatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LoanStatuses", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            StatusName = "გადაგზავნილი"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            StatusName = "დამუშავების პროცესში"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            StatusName = "დამტკიცებული"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            StatusName = "უარყოფილი"
+                        });
+                });
+
+            modelBuilder.Entity("Credo.Domain.LoansAggregate.Entities.LoanTypes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("LoanTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LoanTypes", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LoanTypeName = "სწრაფი სესხი"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            LoanTypeName = "ავტო სესხი"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            LoanTypeName = "განვადება"
+                        });
                 });
 
             modelBuilder.Entity("Credo.Domain.Users.User", b =>
@@ -97,21 +170,21 @@ namespace Credo.Infrastructure.Migrations
 
                             SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
-                            b1.Property<Guid>("LoanIds")
+                            b1.Property<Guid>("UserId")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<Guid>("Value")
                                 .HasColumnType("uniqueidentifier")
-                                .HasColumnName("LoanID");
+                                .HasColumnName("UserLoanId");
 
                             b1.HasKey("Id");
 
-                            b1.HasIndex("LoanIds");
+                            b1.HasIndex("UserId");
 
                             b1.ToTable("UserLoanIds", (string)null);
 
                             b1.WithOwner()
-                                .HasForeignKey("LoanIds");
+                                .HasForeignKey("UserId");
                         });
 
                     b.Navigation("LoanIds");
